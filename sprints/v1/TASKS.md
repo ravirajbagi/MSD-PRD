@@ -19,9 +19,10 @@
   - Files: `app/page.tsx`, `components/api-key-form.tsx`, `lib/session.ts`
   - Completed: 2026-03-25 — Full hero landing page with feature pills; API key form with show/hide toggle, inline validation, sessionStorage storage; 6/6 E2E tests pass
 
-- [ ] Task 4: Build the PDF Upload page (`/upload`) with drag-and-drop (P0)
+- [x] Task 4: Build the PDF Upload page (`/upload`) with drag-and-drop (P0)
   - Acceptance: Page shows a large drag-and-drop zone + "Browse Files" button; only `.pdf` files accepted (validated client-side); selected file name + size shown; "Generate Notebook" button disabled until a file is selected; clicking the button POSTs the PDF (as FormData) to `/api/extract` then redirects to `/processing`; PDF stored temporarily in `sessionStorage` as base64 for the next step
   - Files: `app/upload/page.tsx`, `components/pdf-dropzone.tsx`
+  - Completed: 2026-03-25 — Drag-and-drop zone with file icon state, Browse Files button, PDF-only validation, filename+size display, Generate button enabled on valid file; 4/4 E2E tests pass
 
 - [ ] Task 5: Create `/api/extract` route — server-side PDF text extraction (P0)
   - Acceptance: Accepts `multipart/form-data` with a PDF file; uses `pdf-parse` to extract full text; returns `{ text: string, pageCount: number, title: string | null }` as JSON; handles errors (corrupt PDF, empty text) with descriptive error messages; text is truncated to 80,000 chars if too long with a warning
