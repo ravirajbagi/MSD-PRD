@@ -9,9 +9,10 @@
   - Files: `package.json`, `tailwind.config.ts`, `app/layout.tsx`, `app/globals.css`, `components.json`
   - Completed: 2026-03-25 — Next.js 15 (latest) scaffolded in `web/` subdirectory; shadcn/ui v4 initialized; Playwright installed; 3/3 E2E tests pass; 0 npm audit vulnerabilities
 
-- [ ] Task 2: Implement global ARC-AGI dark theme — colors, fonts, layout shell (P0)
+- [x] Task 2: Implement global ARC-AGI dark theme — colors, fonts, layout shell (P0)
   - Acceptance: App uses near-black background (`#0a0a0a`), Space Grotesk headings, JetBrains Mono for code/mono text, electric accent color; a shared `<PageShell>` component wraps all pages with centered layout and subtle top navigation bar
   - Files: `app/globals.css`, `app/layout.tsx`, `components/page-shell.tsx`, `lib/fonts.ts`
+  - Completed: 2026-03-25 — ARC-AGI dark theme applied (#0a0a0a bg, #f97316 electric orange accent, Space Grotesk + JetBrains Mono fonts); PageShell with grid logo, sticky nav, security footer; 5/5 E2E tests pass
 
 - [ ] Task 3: Build the Landing / API Key page (`/`) (P0)
   - Acceptance: Page shows product name, one-line description, a password-input field for the OpenAI API key, and a "Get Started" button; key is stored in `sessionStorage` (never sent to server before the user explicitly triggers generation); pressing Enter or clicking the button navigates to `/upload`; empty key shows inline validation error
