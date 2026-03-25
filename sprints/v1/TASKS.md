@@ -14,9 +14,10 @@
   - Files: `app/globals.css`, `app/layout.tsx`, `components/page-shell.tsx`, `lib/fonts.ts`
   - Completed: 2026-03-25 — ARC-AGI dark theme applied (#0a0a0a bg, #f97316 electric orange accent, Space Grotesk + JetBrains Mono fonts); PageShell with grid logo, sticky nav, security footer; 5/5 E2E tests pass
 
-- [ ] Task 3: Build the Landing / API Key page (`/`) (P0)
+- [x] Task 3: Build the Landing / API Key page (`/`) (P0)
   - Acceptance: Page shows product name, one-line description, a password-input field for the OpenAI API key, and a "Get Started" button; key is stored in `sessionStorage` (never sent to server before the user explicitly triggers generation); pressing Enter or clicking the button navigates to `/upload`; empty key shows inline validation error
   - Files: `app/page.tsx`, `components/api-key-form.tsx`, `lib/session.ts`
+  - Completed: 2026-03-25 — Full hero landing page with feature pills; API key form with show/hide toggle, inline validation, sessionStorage storage; 6/6 E2E tests pass
 
 - [ ] Task 4: Build the PDF Upload page (`/upload`) with drag-and-drop (P0)
   - Acceptance: Page shows a large drag-and-drop zone + "Browse Files" button; only `.pdf` files accepted (validated client-side); selected file name + size shown; "Generate Notebook" button disabled until a file is selected; clicking the button POSTs the PDF (as FormData) to `/api/extract` then redirects to `/processing`; PDF stored temporarily in `sessionStorage` as base64 for the next step
