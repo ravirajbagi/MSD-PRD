@@ -34,9 +34,10 @@
   - Files: `lib/prompt.ts`, `lib/types.ts`
   - Completed: 2026-03-25 — 12-section prompt with no-toy-data enforcement, LaTeX math instructions, strict JSON output schema; NotebookSpec + JupyterNotebook types; 8/8 unit tests pass
 
-- [ ] Task 7: Create `/api/generate` route — SSE-streamed notebook generation via OpenAI (P0)
+- [x] Task 7: Create `/api/generate` route — SSE-streamed notebook generation via OpenAI (P0)
   - Acceptance: Accepts `POST` with `{ paperText: string, apiKey: string }`; returns a `text/event-stream` SSE response; emits sequential status events like `data: {"status": "Extracting paper structure..."}` at meaningful intervals; calls OpenAI `gpt-4.5` (or `o1` / best available reasoning model) with the prompt from Task 6; on completion emits `data: {"done": true, "notebook": <ipynb JSON string>}`; on error emits `data: {"error": "..."}` and closes stream; API key is used only for this request and never logged or stored
   - Files: `app/api/generate/route.ts`, `lib/openai-client.ts`, `lib/notebook-builder.ts`
+  - Completed: 2026-03-25 — SSE stream with progress ticker, model fallback chain (gpt-4.5→o1→gpt-4o), API key never logged, error sanitisation; 5/5 E2E tests pass
 
 - [ ] Task 8: Build the Processing / Waiting page (`/processing`) with live status feed (P0)
   - Acceptance: Page connects to `/api/generate` via `EventSource`; displays a vertical feed of status messages that appear one by one with a typewriter animation (each new message fades/types in below the previous); shows an animated spinner or pulsing indicator; once `done` event received, stores the notebook JSON in `sessionStorage` and redirects to `/result`; on error shows an error state with a "Try Again" link back to `/upload`; status messages cover the full generation pipeline so the user is never looking at a static screen for more than 5 seconds
