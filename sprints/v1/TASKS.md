@@ -29,9 +29,10 @@
   - Files: `app/api/extract/route.ts`, `lib/pdf-parser.ts`
   - Completed: 2026-03-25 — pdf-parse v1.1.1 via internal path (bypasses debug-mode test loading); 405/400/422 error handling; 5/5 E2E tests pass
 
-- [ ] Task 6: Build the structured OpenAI prompt template for notebook generation (P0)
+- [x] Task 6: Build the structured OpenAI prompt template for notebook generation (P0)
   - Acceptance: A `buildNotebookPrompt(paperText: string)` function returns a complete system + user prompt that instructs GPT to produce a JSON response matching the `NotebookSpec` TypeScript type (title, abstract, 12 ordered sections each with `cell_type`, `source` array); prompt includes explicit instructions for: realistic synthetic data, LaTeX math in markdown cells, well-commented production-quality Python, no toy examples; `NotebookSpec` type is exported
   - Files: `lib/prompt.ts`, `lib/types.ts`
+  - Completed: 2026-03-25 — 12-section prompt with no-toy-data enforcement, LaTeX math instructions, strict JSON output schema; NotebookSpec + JupyterNotebook types; 8/8 unit tests pass
 
 - [ ] Task 7: Create `/api/generate` route — SSE-streamed notebook generation via OpenAI (P0)
   - Acceptance: Accepts `POST` with `{ paperText: string, apiKey: string }`; returns a `text/event-stream` SSE response; emits sequential status events like `data: {"status": "Extracting paper structure..."}` at meaningful intervals; calls OpenAI `gpt-4.5` (or `o1` / best available reasoning model) with the prompt from Task 6; on completion emits `data: {"done": true, "notebook": <ipynb JSON string>}`; on error emits `data: {"error": "..."}` and closes stream; API key is used only for this request and never logged or stored
