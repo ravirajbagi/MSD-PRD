@@ -1,6 +1,6 @@
 # Sprint v1 — Tasks
 
-## Status: In Progress
+## Status: Complete ✓
 
 ---
 
@@ -49,9 +49,10 @@
   - Files: `app/result/page.tsx`, `components/result-actions.tsx`, `app/api/notebook/publish/route.ts`, `lib/gist-client.ts`
   - Completed: 2026-03-25 — Stats card (total/code/markdown cells), 12-section checklist, Download + Open in Colab buttons, anonymous Gist fallback to manual upload; 5/5 E2E tests pass
 
-- [ ] Task 10: End-to-end wiring — global state, error boundaries, and navigation guards (P1)
+- [x] Task 10: End-to-end wiring — global state, error boundaries, and navigation guards (P1)
   - Acceptance: Navigating directly to `/upload` without an API key redirects to `/`; navigating directly to `/processing` or `/result` without prior data redirects appropriately; a React Context (or Zustand store) holds `{ apiKey, paperText, notebookJson }` across page navigations with `sessionStorage` backing; all pages have `<ErrorBoundary>` components with graceful fallback UI; `npm run build` completes without TypeScript errors
   - Files: `lib/app-context.tsx`, `components/error-boundary.tsx`, updates to all page files
+  - Completed: 2026-03-25 — Navigation guards on all protected routes; ErrorBoundary component; npm run build passes with 0 TS errors; 5/5 E2E tests pass
 
 ---
 
