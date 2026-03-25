@@ -24,9 +24,10 @@
   - Files: `app/upload/page.tsx`, `components/pdf-dropzone.tsx`
   - Completed: 2026-03-25 — Drag-and-drop zone with file icon state, Browse Files button, PDF-only validation, filename+size display, Generate button enabled on valid file; 4/4 E2E tests pass
 
-- [ ] Task 5: Create `/api/extract` route — server-side PDF text extraction (P0)
+- [x] Task 5: Create `/api/extract` route — server-side PDF text extraction (P0)
   - Acceptance: Accepts `multipart/form-data` with a PDF file; uses `pdf-parse` to extract full text; returns `{ text: string, pageCount: number, title: string | null }` as JSON; handles errors (corrupt PDF, empty text) with descriptive error messages; text is truncated to 80,000 chars if too long with a warning
   - Files: `app/api/extract/route.ts`, `lib/pdf-parser.ts`
+  - Completed: 2026-03-25 — pdf-parse v1.1.1 via internal path (bypasses debug-mode test loading); 405/400/422 error handling; 5/5 E2E tests pass
 
 - [ ] Task 6: Build the structured OpenAI prompt template for notebook generation (P0)
   - Acceptance: A `buildNotebookPrompt(paperText: string)` function returns a complete system + user prompt that instructs GPT to produce a JSON response matching the `NotebookSpec` TypeScript type (title, abstract, 12 ordered sections each with `cell_type`, `source` array); prompt includes explicit instructions for: realistic synthetic data, LaTeX math in markdown cells, well-commented production-quality Python, no toy examples; `NotebookSpec` type is exported
