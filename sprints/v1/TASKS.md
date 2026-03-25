@@ -39,9 +39,10 @@
   - Files: `app/api/generate/route.ts`, `lib/openai-client.ts`, `lib/notebook-builder.ts`
   - Completed: 2026-03-25 — SSE stream with progress ticker, model fallback chain (gpt-4.5→o1→gpt-4o), API key never logged, error sanitisation; 5/5 E2E tests pass
 
-- [ ] Task 8: Build the Processing / Waiting page (`/processing`) with live status feed (P0)
+- [x] Task 8: Build the Processing / Waiting page (`/processing`) with live status feed (P0)
   - Acceptance: Page connects to `/api/generate` via `EventSource`; displays a vertical feed of status messages that appear one by one with a typewriter animation (each new message fades/types in below the previous); shows an animated spinner or pulsing indicator; once `done` event received, stores the notebook JSON in `sessionStorage` and redirects to `/result`; on error shows an error state with a "Try Again" link back to `/upload`; status messages cover the full generation pipeline so the user is never looking at a static screen for more than 5 seconds
   - Files: `app/processing/page.tsx`, `components/status-feed.tsx`, `hooks/use-sse.ts`
+  - Completed: 2026-03-25 — SSE fetch loop, fade-in status feed with blink cursor, animated spinner, error state with retry; 3/3 E2E tests pass
 
 - [ ] Task 9: Build the Result page (`/result`) — download + Open in Colab (P0)
   - Acceptance: Page reads notebook JSON from `sessionStorage`; "Download .ipynb" button triggers a client-side file download of the `.ipynb` JSON file named after the paper title (slugified); "Open in Google Colab" button POSTs the notebook to `/api/notebook/publish` which creates an anonymous GitHub Gist and returns a Colab URL (`https://colab.research.google.com/gist/...`), then opens it in a new tab; if Gist creation fails, shows a friendly fallback message instructing the user to upload the downloaded file to colab.new; page also shows paper title, a summary of what was generated (section count, cell count), and a "Generate Another" link
