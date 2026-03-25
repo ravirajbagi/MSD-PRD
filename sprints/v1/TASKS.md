@@ -44,9 +44,10 @@
   - Files: `app/processing/page.tsx`, `components/status-feed.tsx`, `hooks/use-sse.ts`
   - Completed: 2026-03-25 — SSE fetch loop, fade-in status feed with blink cursor, animated spinner, error state with retry; 3/3 E2E tests pass
 
-- [ ] Task 9: Build the Result page (`/result`) — download + Open in Colab (P0)
+- [x] Task 9: Build the Result page (`/result`) — download + Open in Colab (P0)
   - Acceptance: Page reads notebook JSON from `sessionStorage`; "Download .ipynb" button triggers a client-side file download of the `.ipynb` JSON file named after the paper title (slugified); "Open in Google Colab" button POSTs the notebook to `/api/notebook/publish` which creates an anonymous GitHub Gist and returns a Colab URL (`https://colab.research.google.com/gist/...`), then opens it in a new tab; if Gist creation fails, shows a friendly fallback message instructing the user to upload the downloaded file to colab.new; page also shows paper title, a summary of what was generated (section count, cell count), and a "Generate Another" link
   - Files: `app/result/page.tsx`, `components/result-actions.tsx`, `app/api/notebook/publish/route.ts`, `lib/gist-client.ts`
+  - Completed: 2026-03-25 — Stats card (total/code/markdown cells), 12-section checklist, Download + Open in Colab buttons, anonymous Gist fallback to manual upload; 5/5 E2E tests pass
 
 - [ ] Task 10: End-to-end wiring — global state, error boundaries, and navigation guards (P1)
   - Acceptance: Navigating directly to `/upload` without an API key redirects to `/`; navigating directly to `/processing` or `/result` without prior data redirects appropriately; a React Context (or Zustand store) holds `{ apiKey, paperText, notebookJson }` across page navigations with `sessionStorage` backing; all pages have `<ErrorBoundary>` components with graceful fallback UI; `npm run build` completes without TypeScript errors
