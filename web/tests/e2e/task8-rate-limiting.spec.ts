@@ -1,8 +1,10 @@
 import { test, expect } from '@playwright/test';
 
 const VALID_KEY = 'sk-test-12345678901234567890';
-// Unique IP per test run to avoid interference from other tests
-const TEST_IP = '10.99.88.77';
+// Generate a unique IP per test run to avoid interference across runs
+// (dev server in-memory rate limiter persists between runs)
+const runId = Date.now() % 65535;
+const TEST_IP = `192.168.${Math.floor(runId / 256)}.${runId % 256}`;
 
 test.describe('Task 8 — Rate Limiting', () => {
   test('6th rapid POST to /api/generate from same IP returns 429', async ({ request }) => {

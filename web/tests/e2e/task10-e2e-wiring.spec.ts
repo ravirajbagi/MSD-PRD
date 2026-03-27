@@ -31,7 +31,7 @@ test.describe('Task 10 — E2E Navigation Guards', () => {
   test('full happy-path navigation flow exists (/ -> /upload -> /processing)', async ({ page }) => {
     // Step 1: Enter API key
     await page.goto('/');
-    await page.fill('[data-testid="api-key-input"]', 'sk-test-1234567890');
+    await page.fill('[data-testid="api-key-input"]', 'sk-test-1234567890abcdef');
     await page.click('[data-testid="get-started-btn"]');
     await expect(page).toHaveURL('/upload');
 

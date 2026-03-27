@@ -1,7 +1,6 @@
 // Use internal path to bypass pdf-parse's debug-mode test file loading
 // (index.js reads a test PDF when module.parent is null, which breaks in Next.js)
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const pdfParse = require('pdf-parse/lib/pdf-parse.js');
+import pdfParse from 'pdf-parse/lib/pdf-parse.js';
 
 const MAX_CHARS = 80_000;
 

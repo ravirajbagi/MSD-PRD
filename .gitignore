@@ -1,0 +1,23 @@
+# AWS credentials — never commit
+aws_cred.md
+*.credentials
+*.pem
+
+# Local env files
+.env
+.env.local
+.env*.local
+
+# Terraform state (contains secrets)
+terraform/.terraform/
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/.terraform.lock.hcl
+
+# OS
+.DS_Store
+Thumbs.db
+
+# test artifacts
+test-results/
+playwright-report/

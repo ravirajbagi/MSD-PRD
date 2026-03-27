@@ -1,36 +1,149 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PaperToNotebook
 
-## Getting Started
+Upload a research paper PDF → get a publication-quality Google Colab notebook in ~90 seconds.
 
-First, run the development server:
+Built with Next.js 16 (App Router), TypeScript, and GPT-4o-mini.
+
+---
+
+## Local development (Node.js)
 
 ```bash
+cd web
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Local development (Docker)
 
-## Learn More
+Requires Docker Desktop.
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# 1. Copy the env example and add your GITHUB_TOKEN (optional)
+cp web/.env.local.example web/.env.local
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# 2. Start the app
+docker compose up
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# 3. Open http://localhost:3000
 
-## Deploy on Vercel
+# 4. Stop
+docker compose down
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The `GITHUB_TOKEN` env var is optional — anonymous Gist creation works without it,
+but a token avoids GitHub rate limits.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Running tests
+
+### Unit + integration tests (Vitest)
+
+```bash
+cd web
+npx vitest run
+```
+
+### E2E tests (Playwright — headless, CI-safe)
+
+```bash
+cd web
+npx playwright install chromium --with-deps
+npx playwright test --grep-invert @quality
+```
+
+### Quality gate test (manual, headed, real OpenAI call)
+
+Requires `C:\MyData\paper.pdf` ("Attention Is All You Need") and a real OpenAI API key.
+
+```bash
+cd web
+npx playwright test tests/e2e/task8-quality-gate.spec.ts --headed --grep @quality
+```
+
+---
+
+## Deploying to AWS with Terraform
+
+### Prerequisites
+
+- AWS CLI configured (`aws configure`)
+- Terraform CLI (`choco install terraform` / `brew install terraform`)
+- Docker Desktop
+
+### 1. Provision infrastructure
+
+```bash
+cd terraform
+terraform init
+terraform plan
+terraform apply
+```
+
+This creates: ECR repository, ECS cluster, Fargate task (512 CPU / 1024 MB),
+ECS service, ALB on port 80, security groups, IAM task execution role,
+and a CloudWatch log group.
+
+After apply, note the `alb_dns_name` output — that is the live URL.
+
+### 2. Push a Docker image
+
+```bash
+# Get ECR login token
+aws ecr get-login-password --region us-east-1 | \
+  docker login --username AWS --password-stdin <ecr_repo_url>
+
+# Build and push
+docker build -t paper-to-notebook ./web
+docker tag paper-to-notebook:latest <ecr_repo_url>:latest
+docker push <ecr_repo_url>:latest
+```
+
+### 3. Verify the deployment
+
+```bash
+curl http://<alb_dns_name>/
+# Should return HTTP 200
+```
+
+---
+
+## GitHub Secrets (required for CI/CD)
+
+Set these in your repository's **Settings → Secrets and variables → Actions**:
+
+| Secret | Description |
+|--------|-------------|
+| `AWS_ACCESS_KEY_ID` | IAM user `paper-to-notebook-deploy` access key |
+| `AWS_SECRET_ACCESS_KEY` | IAM user secret key |
+| `AWS_REGION` | AWS region (e.g. `us-east-1`) |
+| `ECR_REPOSITORY` | ECR repo name (`paper-to-notebook`) |
+
+### Branch protection
+
+After pushing `.github/workflows/ci.yml`, manually enable
+**"Require status checks to pass before merging"** on the `main` branch in
+GitHub Settings → Branches, selecting the `test` and `security` jobs.
+
+---
+
+## CI/CD pipeline
+
+```
+Push / PR to any branch
+        │
+        ▼
+  GitHub Actions: ci.yml
+  ├── job: test   (Vitest + Playwright headless)
+  └── job: security   (npm audit + semgrep)
+        │ (only on push to main)
+        ▼
+  GitHub Actions: deploy.yml
+  ├── job: build   (docker build + push to ECR)
+  └── job: deploy  (ECS update-service, rolling deploy)
+```

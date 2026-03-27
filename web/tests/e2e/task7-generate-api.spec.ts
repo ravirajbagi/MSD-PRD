@@ -26,10 +26,12 @@ test.describe('Task 7 — /api/generate SSE route', () => {
 
   test('returns text/event-stream content-type for valid request', async ({ request }) => {
     // We can't pass a real API key in tests — we test that the route at least
-    // accepts the request shape and returns SSE headers before failing
+    // accepts the request shape and returns SSE headers before failing.
+    // Use a unique IP per test to avoid rate-limiter state from previous runs.
+    const uniqueIp = `172.16.${Date.now() % 256}.1`;
     const res = await request.post('/api/generate', {
-      data: { paperText: 'test paper text about transformers', apiKey: 'sk-invalid-key' },
-      headers: { 'Content-Type': 'application/json' },
+      data: { paperText: 'test paper text about transformers', apiKey: 'sk-invalid-key-abcdefghij123' },
+      headers: { 'Content-Type': 'application/json', 'X-Forwarded-For': uniqueIp },
     });
     // Route should return SSE content type (even if OpenAI call fails)
     const contentType = res.headers()['content-type'];
@@ -37,9 +39,10 @@ test.describe('Task 7 — /api/generate SSE route', () => {
   });
 
   test('SSE stream emits status events before error on bad key', async ({ request }) => {
+    const uniqueIp = `172.16.${Date.now() % 256}.2`;
     const res = await request.post('/api/generate', {
-      data: { paperText: 'test paper text about deep learning', apiKey: 'sk-invalid-test-key' },
-      headers: { 'Content-Type': 'application/json' },
+      data: { paperText: 'test paper text about deep learning', apiKey: 'sk-invalid-test-key-abcdefgh' },
+      headers: { 'Content-Type': 'application/json', 'X-Forwarded-For': uniqueIp },
     });
     expect(res.status()).toBe(200);
     const body = await res.text();

@@ -33,15 +33,15 @@ test.describe('Task 3 — Landing / API Key page', () => {
 
   test('key is stored in sessionStorage after submission', async ({ page }) => {
     await page.goto('/');
-    await page.fill('[data-testid="api-key-input"]', 'sk-test-stored-key');
+    await page.fill('[data-testid="api-key-input"]', 'sk-test-stored-key-abcdefghij');
     await page.click('[data-testid="get-started-btn"]');
     const stored = await page.evaluate(() => sessionStorage.getItem('openai_api_key'));
-    expect(stored).toBe('sk-test-stored-key');
+    expect(stored).toBe('sk-test-stored-key-abcdefghij');
   });
 
   test('pressing Enter in the input navigates to /upload', async ({ page }) => {
     await page.goto('/');
-    await page.fill('[data-testid="api-key-input"]', 'sk-test-enter-key');
+    await page.fill('[data-testid="api-key-input"]', 'sk-test-enter-key-abcdefghij');
     await page.press('[data-testid="api-key-input"]', 'Enter');
     await expect(page).toHaveURL('/upload');
   });
