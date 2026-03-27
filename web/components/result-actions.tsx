@@ -40,6 +40,10 @@ export function ResultActions({ notebookJson, title }: ResultActionsProps) {
         throw new Error(data.error || 'Could not create Gist.');
       }
 
+      if (!data.colabUrl.startsWith('https://colab.research.google.com/')) {
+        throw new Error('Invalid Colab URL received from server.');
+      }
+
       setColabState('done');
       window.open(data.colabUrl, '_blank', 'noopener,noreferrer');
     } catch (err: unknown) {

@@ -39,6 +39,11 @@ export async function createGist(
 
   const data = await response.json() as { id: string; html_url: string };
 
+  // Validate the Gist ID is the expected alphanumeric hex format
+  if (!/^[a-f0-9]+$/.test(data.id)) {
+    throw new Error(`Unexpected Gist ID format: ${data.id}`);
+  }
+
   // Colab URL format for Gist: https://colab.research.google.com/gist/{gist_id}/{filename}
   const colabUrl = `https://colab.research.google.com/gist/${data.id}/${filename.replace('.ipynb', '')}`;
   return colabUrl;

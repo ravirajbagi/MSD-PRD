@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { parsePdf } from '@/lib/pdf-parser';
+import { logRequest, logError } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
+  const start = Date.now();
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? '127.0.0.1';
   let formData: FormData;
   try {
     formData = await req.formData();
@@ -57,6 +60,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    logRequest('/api/extract', ip, 200, Date.now() - start);
     return NextResponse.json({
       text: result.text,
       pageCount: result.pageCount,
@@ -64,8 +68,7 @@ export async function POST(req: NextRequest) {
       truncated: result.truncated,
     });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Unknown error';
-    console.error('[/api/extract] PDF parse error:', message);
+    logError('/api/extract', ip, err);
     return NextResponse.json(
       { error: 'Failed to parse PDF. The file may be corrupt or password-protected.' },
       { status: 422 }

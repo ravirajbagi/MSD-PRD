@@ -12,7 +12,8 @@ export function ApiKeyForm() {
 
   function validate(key: string): string {
     if (!key.trim()) return 'API key is required to continue.';
-    if (key.trim().length < 10) return 'That doesn\'t look like a valid OpenAI API key.';
+    if (!/^sk-[a-zA-Z0-9\-_]{20,}$/.test(key.trim()))
+      return 'Invalid API key format — must start with sk-';
     return '';
   }
 

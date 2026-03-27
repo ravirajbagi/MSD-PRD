@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createGist } from '@/lib/gist-client';
 import { slugify } from '@/lib/notebook-builder';
+import { logRequest, logError } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
+  const start = Date.now();
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? '127.0.0.1';
   let body: { notebookJson?: string; title?: string };
 
   try {
@@ -21,8 +24,10 @@ export async function POST(req: NextRequest) {
 
   try {
     const colabUrl = await createGist(filename, notebookJson);
+    logRequest('/api/notebook/publish', ip, 200, Date.now() - start);
     return NextResponse.json({ colabUrl, filename });
   } catch (err: unknown) {
+    logError('/api/notebook/publish', ip, err);
     const message = err instanceof Error ? err.message : 'Gist creation failed.';
     return NextResponse.json({ error: message }, { status: 502 });
   }

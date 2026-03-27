@@ -3,10 +3,10 @@ import type { NotebookSpec } from './types';
 import { buildNotebookPrompt } from './prompt';
 
 // Primary model — change this single constant to upgrade
-export const OPENAI_MODEL = 'gpt-4.5-preview';
+export const OPENAI_MODEL = 'gpt-4o-mini';
 
 // Fallback chain if primary model is unavailable
-const MODEL_FALLBACKS = ['o1', 'gpt-4o'] as const;
+const MODEL_FALLBACKS = ['gpt-4o'] as const;
 
 /**
  * Generate a NotebookSpec from paper text using OpenAI.
@@ -42,7 +42,7 @@ export async function generateNotebook(
           { role: 'user', content: prompt.user },
         ],
         temperature: 0.3, // Low temperature for consistent structured output
-        max_completion_tokens: 16000,
+        max_completion_tokens: 8000,
         response_format: { type: 'json_object' },
       });
 

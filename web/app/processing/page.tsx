@@ -10,26 +10,24 @@ type Phase = 'processing' | 'error';
 
 export default function ProcessingPage() {
   const router = useRouter();
+  const routerRef = useRef(router);
+  routerRef.current = router;
   const [phase, setPhase] = useState<Phase>('processing');
   const [statusMessages, setStatusMessages] = useState<string[]>([
     'Initializing notebook generation...',
   ]);
   const [errorMessage, setErrorMessage] = useState('');
   const abortRef = useRef<AbortController | null>(null);
-  const hasStarted = useRef(false);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     const apiKey = session.getApiKey();
     const paperText = session.getPaperText();
 
     if (!apiKey || !paperText) {
-      router.replace('/');
+      routerRef.current.replace('/');
       return;
     }
-
-    if (hasStarted.current) return;
-    hasStarted.current = true;
-
     const controller = new AbortController();
     abortRef.current = controller;
 
@@ -73,13 +71,28 @@ export default function ProcessingPage() {
               }
 
               if (event.done && event.notebook) {
-                session.setNotebookJson(event.notebook);
+                const saved = session.setNotebookJson(event.notebook);
+                if (!saved) {
+                  setErrorMessage(
+                    'Notebook is too large to store in browser storage. Please download directly.'
+                  );
+                  setPhase('error');
+                  // Offer direct download as fallback
+                  const blob = new Blob([event.notebook], { type: 'application/json' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = 'notebook.ipynb';
+                  a.click();
+                  URL.revokeObjectURL(url);
+                  return;
+                }
                 if (event.title) session.setPaperTitle(event.title);
                 setStatusMessages((prev) => [
                   ...prev,
                   'Notebook ready! Redirecting...',
                 ]);
-                setTimeout(() => router.push('/result'), 800);
+                setTimeout(() => routerRef.current.push('/result'), 800);
                 return;
               }
 
@@ -107,7 +120,7 @@ export default function ProcessingPage() {
     return () => {
       controller.abort();
     };
-  }, [router]);
+  }, [retryCount]); // router excluded — using routerRef to avoid aborting in-flight requests
 
   return (
     <PageShell>
@@ -129,7 +142,7 @@ export default function ProcessingPage() {
                 Generating Notebook
               </h1>
               <p className="text-sm" style={{ color: '#888888' }}>
-                GPT-4.5 is analyzing your paper and writing each section. This takes ~60–90 seconds.
+                GPT-4o is analyzing your paper and writing each section. This takes ~60–90 seconds.
               </p>
             </div>
 
@@ -209,7 +222,7 @@ export default function ProcessingPage() {
                   setPhase('processing');
                   setStatusMessages(['Retrying notebook generation...']);
                   setErrorMessage('');
-                  hasStarted.current = false;
+                  setRetryCount((c) => c + 1);
                 }}
                 className="w-full py-2.5 px-4 rounded-md text-sm transition-colors"
                 style={{ border: '1px solid rgba(255,255,255,0.10)', color: '#888888' }}
